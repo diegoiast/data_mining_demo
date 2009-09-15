@@ -5,31 +5,31 @@
 #include <QList>
 #include "ui_mainwindow.h"
 
-class QwtPlotCurve;
+#include "nodecollection.h"
+#include "nodeplotcurve.h"
+
+class NodesPlotCurve;
+class NodeCollection;
+//class QwtPlotCurve;
 
 class MainWindowImpl : public QMainWindow, public Ui::MainWindow
 {
 Q_OBJECT
 public:
-	MainWindowImpl( QWidget * parent = 0, Qt::WFlags f = 0 );
+	MainWindowImpl( QWidget* parent = 0, Qt::WFlags f = 0 );
 	void setRandomData( int dimentions );
 private slots:
 	void on_actionRandom2D_triggered(bool checked);
 	void on_actionRandom3D_triggered();
 	void on_actionProcess_triggered();
+	void timerEvent(QTimerEvent *event);
 private:
-	void updateData();
-	void updatePlots();
-	void calculateKMeans();
+	NodesPlotCurve* kmeansSamples;
+	NodesPlotCurve* claraSamples;
 	
-	QwtPlotCurve* kmeansSamples;
-	QwtPlotCurve* claraSamples;
-	QList<QObject*> kmeansList; 
-	QList<QObject*> claraList; 
+	NodeCollection* claraList; 
+	NodeCollection* kmeansList;
+	int kmeansTimer; 
 };
+
 #endif
-
-
-
-
-
