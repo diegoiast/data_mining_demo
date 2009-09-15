@@ -1,3 +1,10 @@
+/**
+ * \file dataset.h
+ * \brief Definitions of DataSet
+ * \author Diego Iastrubni elcuco@kde.org
+ * License GPLv3, 2008,2009
+ */
+
 #ifndef DATASET_H
 #define DATASET_H
 

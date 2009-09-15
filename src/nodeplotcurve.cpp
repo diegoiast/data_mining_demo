@@ -1,3 +1,10 @@
+/**
+ * \file nodeplotcurve.cpp
+ * \brief Implementation of NodesPlotCurve
+ * \author Diego Iastrubni elcuco@kde.org
+ * License GPLv3, 2008,2009
+ */
+
 #include <QPainter>
 #include <QBrush>
 #include <QPoint>

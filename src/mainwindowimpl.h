@@ -1,3 +1,11 @@
+/**
+ * \file mainwindowimpl.h
+ * \brief Definition of the main window
+ * \author Diego Iastrubni elcuco@kde.org
+ * License GPLv3, 2008,2009
+ */
+
+
 #ifndef MAINWINDOWIMPL_H
 #define MAINWINDOWIMPL_H
 

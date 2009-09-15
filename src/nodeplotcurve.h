@@ -1,3 +1,10 @@
+/**
+ * \file nodeplotcurve.h
+ * \brief Definition of NodesPlotCurve
+ * \author Diego Iastrubni elcuco@kde.org
+ * License GPLv3, 2008,2009
+ */
+
 #ifndef NODEPLOTCURVE_H
 #define NODEPLOTCURVE_H
 

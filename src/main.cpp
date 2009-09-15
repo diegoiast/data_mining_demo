@@ -1,3 +1,10 @@
+/**
+ * \file main.cpp
+ * \brief Application entry point
+ * \author Diego Iastrubni elcuco@kde.org
+ * License GPLv3, 2008,2009
+ */
+
 #include <QApplication>
 #include "mainwindowimpl.h"
 

@@ -1,3 +1,10 @@
+/**
+ * \file mainwindowimpl.cpp
+ * \brief Implementation of the main window
+ * \author Diego Iastrubni elcuco@kde.org
+ * License GPLv3, 2008,2009
+ */
+
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QFileDialog>

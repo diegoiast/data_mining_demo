@@ -1,3 +1,10 @@
+/**
+ * \file dataset.cpp
+ * \brief Implementation of DataSet
+ * \author Diego Iastrubni elcuco@kde.org
+ * License GPLv3, 2008,2009
+ */
+
 #include <math.h>
 #include <QString>
 #include "dataset.h"

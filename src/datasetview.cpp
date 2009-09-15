@@ -1,3 +1,10 @@
+/**
+ * \file datasetview.cpp
+ * \brief Implementation of DataSetView - a proxy to QWT plot classes
+ * \author Diego Iastrubni elcuco@kde.org
+ * License GPLv3, 2008,2009
+ */
+
 #include "dataset.h"
 #include "datasetview.h"
 

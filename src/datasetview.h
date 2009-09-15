@@ -1,3 +1,10 @@
+/**
+ * \file datasetview.h
+ * \brief Definition of DataSetView - a proxy to QWT plot classes
+ * \author Diego Iastrubni elcuco@kde.org
+ * License GPLv3, 2008,2009
+ */
+
 #ifndef DATASETVIEW_H
 #define DATASETVIEW_H
 
