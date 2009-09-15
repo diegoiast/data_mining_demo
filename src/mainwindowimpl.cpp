@@ -81,7 +81,9 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 
 void MainWindowImpl::setRandomData( int dimentions )
 {
-	tableWidget->clear();
+        stopTheTimer();
+
+        tableWidget->clear();
 	for( int x=0; x<MAX_RANDOM_NODES; x++ )
 		for ( int y=0; y<dimentions; y++ )
 			tableWidget->setItem( x, y, new QTableWidgetItem(QString::number(rand()%MAX_VALUE)));
@@ -122,6 +124,14 @@ void MainWindowImpl::populateDataSet()
 	}
 }
 
+void MainWindowImpl::stopTheTimer()
+{
+        if (updateTimer!=0)
+                killTimer( updateTimer );
+        updateTimer = 0;
+}
+
+
 void MainWindowImpl::on_actionLoad_triggered()
 {
 	QString fileName = QFileDialog::getOpenFileName(this,
@@ -141,7 +151,9 @@ void MainWindowImpl::on_actionLoad_triggered()
 		return;
 	}
 	
-	int y = 0;
+        if (updateTimer!=0)
+                killTimer( updateTimer );
+        int y = 0;
 	while (!file.atEnd()) 
 	{
 		QString line = file.readLine().simplified();
@@ -168,9 +180,7 @@ void MainWindowImpl::on_actionLoad_triggered()
 
 void MainWindowImpl::on_actionClearDataSet_triggered()
 {
-	if (updateTimer!=0)
-		killTimer( updateTimer );
-		
+        stopTheTimer();
 	tableWidget->clear();
 	claraDataSet->clear();
 	kmeansDataSet->clear();
@@ -187,7 +197,7 @@ void MainWindowImpl::on_actionSwitchView_triggered()
 	dataTab->setCurrentIndex( i );
 }
 
-void MainWindowImpl::on_actionRandom2D_triggered(bool checked)
+void MainWindowImpl::on_actionRandom2D_triggered()
 {
 	setRandomData( 2 );
 }
@@ -199,12 +209,7 @@ void MainWindowImpl::on_actionRandom3D_triggered()
 
 void MainWindowImpl::on_actionProcess_triggered()
 {
-	if (updateTimer!=0)
-	{
-		killTimer( updateTimer );
-		updateTimer = 0;
-	}
-	
+        stopTheTimer();
 	populateDataSet();
 	
 	//if (kmeansCheckBox->isChecked())
@@ -240,7 +245,7 @@ void MainWindowImpl::timerEvent(QTimerEvent *event)
 		kmeansDataSet->calculateAssociations();
 		kmeansPlotCurve->attachToDataSet( kmeansDataSetView ); 
 		kmeansPlot->replot();
-	}
+        }
 
 	if (claraCheckBox->isChecked())
 	{
@@ -250,22 +255,22 @@ void MainWindowImpl::timerEvent(QTimerEvent *event)
 		claraPlot->replot();
 	}
 	
-
 	if (pamCheckBox->isChecked())
 	{
 		pamDataSet->PAM_calculateNewCentroids();
 		pamDataSet->calculateAssociations();
 		pamPlotCurve->attachToDataSet( pamDataSetView ); 
 		pamPlot->replot();
-	}
+        }
+
+        Q_UNUSED(event);
 }
 
 void MainWindowImpl::on_actionAbout_triggered()
 {
 	QMessageBox::information( this, "About", 
-		"Data Mining application, Braude 2008 \n"
+                "Data Mining application, KMeans/PAM/Clara demo\n"
 		"\n"
 		"  Diego Iastrubni - diegoiast@gmail.com\n"
-		"  Eyad Abo El Zalaf` - eyad1983@gmail.com"
 	);
 }

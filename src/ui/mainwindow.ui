@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow" >
-  <property name="geometry" >
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,277 +10,229 @@
     <height>298</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>DataMining 2008 - Diego/Eyad</string>
+  <property name="windowTitle">
+   <string>DataMining - KMeans/Clara/PAM</string>
   </property>
-  <widget class="QWidget" name="centralwidget" >
-   <layout class="QGridLayout" >
-    <property name="leftMargin" >
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout">
+    <property name="margin">
      <number>0</number>
     </property>
-    <property name="topMargin" >
+    <property name="spacing">
      <number>0</number>
     </property>
-    <property name="rightMargin" >
-     <number>0</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>0</number>
-    </property>
-    <property name="horizontalSpacing" >
-     <number>0</number>
-    </property>
-    <property name="verticalSpacing" >
-     <number>0</number>
-    </property>
-    <item row="0" column="0" colspan="3" >
-     <widget class="QTabWidget" name="dataTab" >
-      <property name="currentIndex" >
+    <item row="0" column="0" colspan="3">
+     <widget class="QTabWidget" name="dataTab">
+      <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab" >
-       <attribute name="title" >
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
         <string>Data</string>
        </attribute>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
+       <layout class="QVBoxLayout">
+        <property name="spacing">
          <number>0</number>
         </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
-         <widget class="QTableWidget" name="tableWidget" />
+         <widget class="QTableWidget" name="tableWidget"/>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="kmeansTab" >
-       <attribute name="title" >
+      <widget class="QWidget" name="kmeansTab">
+       <attribute name="title">
         <string>K-Means</string>
        </attribute>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
+       <layout class="QVBoxLayout">
+        <property name="spacing">
          <number>0</number>
         </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
-         <widget class="QwtPlot" native="1" name="kmeansPlot" />
+         <widget class="QwtPlot" name="kmeansPlot" native="true"/>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="claraTab" >
-       <attribute name="title" >
+      <widget class="QWidget" name="claraTab">
+       <attribute name="title">
         <string>Clara</string>
        </attribute>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
+       <layout class="QVBoxLayout">
+        <property name="spacing">
          <number>0</number>
         </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
-         <widget class="QwtPlot" native="1" name="claraPlot" />
+         <widget class="QwtPlot" name="claraPlot" native="true"/>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="pamTab" >
-       <attribute name="title" >
+      <widget class="QWidget" name="pamTab">
+       <attribute name="title">
         <string>PAM</string>
        </attribute>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
+       <layout class="QVBoxLayout">
+        <property name="spacing">
          <number>0</number>
         </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
-         <widget class="QwtPlot" native="1" name="pamPlot" />
+         <widget class="QwtPlot" name="pamPlot" native="true"/>
         </item>
        </layout>
       </widget>
      </widget>
     </item>
-    <item row="1" column="0" >
-     <widget class="QCheckBox" name="kmeansCheckBox" >
-      <property name="text" >
+    <item row="1" column="0">
+     <widget class="QCheckBox" name="kmeansCheckBox">
+      <property name="text">
        <string>K-Means</string>
       </property>
-      <property name="checked" >
+      <property name="checked">
        <bool>true</bool>
       </property>
      </widget>
     </item>
-    <item row="1" column="1" >
-     <widget class="QLabel" name="label" >
-      <property name="text" >
+    <item row="1" column="1">
+     <widget class="QLabel" name="label">
+      <property name="text">
        <string>Number of centroids</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="2" >
-     <widget class="QSpinBox" name="centroidsNumber" >
-      <property name="minimum" >
+    <item row="1" column="2">
+     <widget class="QSpinBox" name="centroidsNumber">
+      <property name="minimum">
        <number>1</number>
       </property>
-      <property name="maximum" >
+      <property name="maximum">
        <number>11</number>
       </property>
-      <property name="singleStep" >
+      <property name="singleStep">
        <number>1</number>
       </property>
-      <property name="value" >
+      <property name="value">
        <number>4</number>
       </property>
      </widget>
     </item>
-    <item row="2" column="0" >
-     <widget class="QCheckBox" name="claraCheckBox" >
-      <property name="text" >
+    <item row="2" column="0">
+     <widget class="QCheckBox" name="claraCheckBox">
+      <property name="text">
        <string>Clara</string>
       </property>
-      <property name="checked" >
+      <property name="checked">
        <bool>true</bool>
       </property>
      </widget>
     </item>
-    <item row="3" column="0" >
-     <widget class="QCheckBox" name="pamCheckBox" >
-      <property name="text" >
+    <item row="3" column="0">
+     <widget class="QCheckBox" name="pamCheckBox">
+      <property name="text">
        <string>PAM</string>
       </property>
-      <property name="checked" >
+      <property name="checked">
        <bool>true</bool>
       </property>
      </widget>
     </item>
-    <item row="3" column="2" >
-     <widget class="QPushButton" name="pushButton" >
-      <property name="text" >
+    <item row="3" column="2">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
        <string>Process</string>
       </property>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar" >
-   <property name="geometry" >
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>428</width>
-     <height>21</height>
+     <height>24</height>
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar" />
-  <widget class="QToolBar" name="toolBar" >
-   <property name="windowTitle" >
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
     <string>toolBar</string>
    </property>
-   <property name="movable" >
+   <property name="movable">
     <bool>false</bool>
    </property>
-   <attribute name="toolBarArea" >
+   <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
-   <attribute name="toolBarBreak" >
+   <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionClearDataSet" />
-   <addaction name="actionLoad" />
-   <addaction name="actionRandom2D" />
-   <addaction name="actionSwitchView" />
-   <addaction name="separator" />
-   <addaction name="actionAbout" />
-   <addaction name="separator" />
-   <addaction name="actionQuit" />
+   <addaction name="actionClearDataSet"/>
+   <addaction name="actionLoad"/>
+   <addaction name="actionRandom2D"/>
+   <addaction name="actionSwitchView"/>
+   <addaction name="separator"/>
+   <addaction name="actionAbout"/>
+   <addaction name="separator"/>
+   <addaction name="actionQuit"/>
   </widget>
-  <action name="actionLoad" >
-   <property name="text" >
+  <action name="actionLoad">
+   <property name="text">
     <string>Load</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>F3</string>
    </property>
   </action>
-  <action name="actionRandom2D" >
-   <property name="text" >
+  <action name="actionRandom2D">
+   <property name="text">
     <string>&amp;Random</string>
    </property>
   </action>
-  <action name="actionRandom3D" >
-   <property name="text" >
+  <action name="actionRandom3D">
+   <property name="text">
     <string>Random &amp;3D</string>
    </property>
   </action>
-  <action name="actionQuit" >
-   <property name="text" >
+  <action name="actionQuit">
+   <property name="text">
     <string>Quit</string>
    </property>
   </action>
-  <action name="actionProcess" >
-   <property name="text" >
+  <action name="actionProcess">
+   <property name="text">
     <string>Process</string>
    </property>
   </action>
-  <action name="actionClearDataSet" >
-   <property name="text" >
+  <action name="actionClearDataSet">
+   <property name="text">
     <string>Clear</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="actionSwitchView" >
-   <property name="text" >
+  <action name="actionSwitchView">
+   <property name="text">
     <string>SwitchView</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>F12</string>
    </property>
   </action>
-  <action name="actionAbout" >
-   <property name="text" >
+  <action name="actionAbout">
+   <property name="text">
     <string>About</string>
    </property>
   </action>
@@ -288,7 +241,7 @@
   <customwidget>
    <class>QwtPlot</class>
    <extends>QWidget</extends>
-   <header location="global" >qwt_plot.h</header>
+   <header location="global">qwt_plot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

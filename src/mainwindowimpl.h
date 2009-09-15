@@ -19,13 +19,14 @@ public:
 	MainWindowImpl( QWidget* parent = 0, Qt::WFlags f = 0 );
 	void setRandomData( int dimentions );
 	void populateDataSet();
+        void stopTheTimer();
 	
 private slots:
 	void on_actionAbout_triggered();
 	void on_actionLoad_triggered();
 	void on_actionClearDataSet_triggered();
 	void on_actionSwitchView_triggered();
-	void on_actionRandom2D_triggered(bool checked);
+        void on_actionRandom2D_triggered();
 	void on_actionRandom3D_triggered();
 	void on_actionProcess_triggered();
 	void timerEvent(QTimerEvent *event);
