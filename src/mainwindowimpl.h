@@ -6,6 +6,8 @@
 
 #include "ui_mainwindow.h"
 
+class QDockWidget;
+
 class NodesPlotCurve;
 class DataSet;
 class DataSetView;
@@ -19,6 +21,7 @@ public:
 	void populateDataSet();
 	
 private slots:
+	void on_actionAbout_triggered();
 	void on_actionLoad_triggered();
 	void on_actionClearDataSet_triggered();
 	void on_actionSwitchView_triggered();
@@ -37,6 +40,10 @@ private:
 	DataSet*	claraDataSet;
 	DataSetView*	claraDataSetView;
 	NodesPlotCurve* claraPlotCurve;
+
+	DataSet*	pamDataSet;
+	DataSetView*	pamDataSetView;
+	NodesPlotCurve* pamPlotCurve;
 };
 
 #endif

@@ -61,29 +61,52 @@ public:
 	QPointF		getCentroidPF( int number );
 	int		getCentroidCount();
 	
+	// helper functions for PAM
 	double		scattering();
 	int		nextUnassociatedMedoid();
+	
+	// helper function for Clara
+	DataSet*	reducedDataSet( float factor );
+	
 
-	/// calculate the best association of each item to the closest centroid 
+	/// calculate the best association of each item to the closest centroid
+	/// used by clara and PAM 
 	void calculateAssociations();
 
+//- K-Means ---------------------------------------------------------------
 	/// KMeans algorithm - initialize the centroids to a random items
 	void KMeans_init( int centroidsNumber );	
 	/// KMeans algorithm - calculate a new set of centroids by calculating the center of each centroid
 	void KMeans_calculateNewCentroids();
 	
 	
+//- PAM -------------------------------------------------------------------
 	/// PAM algorithm - initialize the centroids to a random items
 	void PAM_init( int centroidsNumber );
 	/// PAM algorithm - calculate a new set of centroids by calculating the center of each centroid
 	void PAM_calculateNewCentroids();
-	
-	void PAM_stage1( int medoidToCalculate );
+	/// PAM stage 1 - find the best medoids, still not reached k
+	void PAM_stage1( int medoidToCalculate );	
+	// PAM stage 2 - try all combinations of medoids/items
 	void PAM_stage2();
+
+//- Clara -----------------------------------------------------------------
+	/// PAM algorithm - initialize the centroids to a random items
+	void Clara_init( int centroidsNumber );
+	/// PAM algorithm - calculate a new set of centroids by calculating the center of each centroid
+	void Clara_calculateNewCentroids();
 	
 private:
+	bool				m_finished;
 	QList <DataSetItem*>		m_items;
 	QList< QVector<double> >	m_centroids;
+	
+	// PAM shite
+	int m_pamStage2_medoid;
+	int m_pamStage2_item;
+	
+	// Clara shite
+	DataSet	*claraMiniPams[5]; 
 };
 
 #endif

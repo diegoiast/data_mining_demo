@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include <QStatusBar>
 #include <QFileDialog>
 #include <QFile>
@@ -18,7 +19,7 @@
 #define SIZE_Y			2*2024
 
 // this is in millisecconds
-#define UPDATE_TIMER		750
+#define UPDATE_TIMER		50
 #define MESSAGE_TIMEOUT		5000
 
 // this controls how much items will be 
@@ -46,7 +47,6 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 		tableWidget->columnWidth( 25 ); 
 	}
 	tableWidget->setHorizontalHeaderLabels(l);
-	addDockWidget(Qt::RightDockWidgetArea, dockWidget);
 
 	QwtSymbol symbol;
 	symbol.setStyle(QwtSymbol::XCross);
@@ -68,6 +68,14 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 	claraPlotCurve->setSymbol(symbol);
 	claraPlotCurve->attach( claraPlot );
 	
+	pamPlot->setCanvasBackground(Qt::black);
+	pamDataSet = new DataSet();
+	pamDataSetView = new DataSetView( pamDataSet );
+	pamPlotCurve = new NodesPlotCurve("PAM");
+	pamPlotCurve->setStyle(QwtPlotCurve::NoCurve);
+	pamPlotCurve->setSymbol(symbol);
+	pamPlotCurve->attach( pamPlot );
+		
 	statusBar()->showMessage( tr("Welcome"), MESSAGE_TIMEOUT );
 }
 
@@ -84,8 +92,12 @@ void MainWindowImpl::setRandomData( int dimentions )
 
 void MainWindowImpl::populateDataSet()
 {
-	claraDataSet->clear();
-	kmeansDataSet->clear();
+	//if (kmeansCheckBox->isChecked())
+		kmeansDataSet->clear();
+	//if (claraCheckBox->isChecked())
+		claraDataSet->clear();
+	//if (pamCheckBox->isChecked())
+		pamDataSet->clear();
 	
 	for ( int n=0; n<SIZE_Y; n++ )
 	{
@@ -100,9 +112,13 @@ void MainWindowImpl::populateDataSet()
 		if (!ok) continue;
 		double y = itemY->text().toDouble(&ok);
 		if (!ok) continue;
-		
-		kmeansDataSet->addItem(x,y);
-		claraDataSet->addItem(x,y);
+
+		//if (kmeansCheckBox->isChecked())
+			kmeansDataSet->addItem(x,y);
+		//if (claraCheckBox->isChecked())
+			claraDataSet->addItem(x,y);
+		//if (pamCheckBox->isChecked())
+			pamDataSet->addItem(x,y);
 	}
 }
 
@@ -146,7 +162,7 @@ void MainWindowImpl::on_actionLoad_triggered()
 	};
 
 	on_actionProcess_triggered();
-	dataTab->setCurrentIndex( 2 );
+	//dataTab->setCurrentIndex( 2 );
 	statusBar()->showMessage( tr("File %1 loaded").arg(fileName), MESSAGE_TIMEOUT );
 }
 
@@ -158,29 +174,17 @@ void MainWindowImpl::on_actionClearDataSet_triggered()
 	tableWidget->clear();
 	claraDataSet->clear();
 	kmeansDataSet->clear();
+	pamDataSet->clear();
 	on_actionProcess_triggered();
 	statusBar()->showMessage( tr("Dataset cleared"), MESSAGE_TIMEOUT );
 }
 
 
-/// switch between the KMeans and Clara displays
+/// switch between the KMeans/Clara/PAM displays
 void MainWindowImpl::on_actionSwitchView_triggered()
 {
-	if (dataTab->currentIndex() == 1)
-	{
-		dataTab->setCurrentIndex( 2 );
-		statusBar()->showMessage( tr("Switching to Clara display"), MESSAGE_TIMEOUT );
-	}
-	else if (dataTab->currentIndex() == 2)
-	{
-		dataTab->setCurrentIndex( 1 );
-		statusBar()->showMessage( tr("Switching to KMeans display"), MESSAGE_TIMEOUT );
-	}
-	else
-	{
-		dataTab->setCurrentIndex( 1 );
-		statusBar()->showMessage( tr("Switching to KMeans display"), MESSAGE_TIMEOUT );
-	}
+	int i = (dataTab->currentIndex() + 1) % 4;
+	dataTab->setCurrentIndex( i );
 }
 
 void MainWindowImpl::on_actionRandom2D_triggered(bool checked)
@@ -196,33 +200,72 @@ void MainWindowImpl::on_actionRandom3D_triggered()
 void MainWindowImpl::on_actionProcess_triggered()
 {
 	if (updateTimer!=0)
+	{
 		killTimer( updateTimer );
-		
+		updateTimer = 0;
+	}
+	
 	populateDataSet();
 	
-	kmeansDataSet->KMeans_init( centroidsNumber->value() );
-	kmeansPlotCurve->attachToDataSet( kmeansDataSetView );
-	kmeansPlot->replot();
+	//if (kmeansCheckBox->isChecked())
+	{
+		kmeansDataSet->KMeans_init( centroidsNumber->value() );
+		kmeansPlotCurve->attachToDataSet( kmeansDataSetView );
+		kmeansPlot->replot();
+	}
 	
-	claraDataSet->PAM_init( centroidsNumber->value() );
-	claraPlotCurve->attachToDataSet( claraDataSetView ); 
-	claraPlot->replot();
+	//if (claraCheckBox->isChecked())
+	{
+		claraDataSet->Clara_init( centroidsNumber->value() );
+		claraPlotCurve->attachToDataSet( claraDataSetView ); 
+		claraPlot->replot();		
+	}
 	
-	if (claraDataSet->getItemCount() == 0)
-		return;
+	//if (pamCheckBox->isChecked())
+	{
+		pamDataSet->PAM_init( centroidsNumber->value() );
+		pamPlotCurve->attachToDataSet( pamDataSetView ); 
+		pamPlot->replot();
+	}
 	
-	updateTimer = startTimer( UPDATE_TIMER );
+	if ( (claraDataSet->getItemCount()!=0) || (pamDataSet->getItemCount() != 0))
+		updateTimer = startTimer( UPDATE_TIMER );
 }
 
 void MainWindowImpl::timerEvent(QTimerEvent *event)
 {
-	kmeansDataSet->KMeans_calculateNewCentroids();
-	kmeansDataSet->calculateAssociations();
-	kmeansPlotCurve->attachToDataSet( kmeansDataSetView ); 
-	kmeansPlot->replot();
+	if (kmeansCheckBox->isChecked())
+	{
+		kmeansDataSet->KMeans_calculateNewCentroids();
+		kmeansDataSet->calculateAssociations();
+		kmeansPlotCurve->attachToDataSet( kmeansDataSetView ); 
+		kmeansPlot->replot();
+	}
 
-	claraDataSet->PAM_calculateNewCentroids();
-	claraDataSet->calculateAssociations();
-	claraPlotCurve->attachToDataSet( claraDataSetView ); 
-	claraPlot->replot();
+	if (claraCheckBox->isChecked())
+	{
+		claraDataSet->Clara_calculateNewCentroids();
+		claraDataSet->calculateAssociations();
+		claraPlotCurve->attachToDataSet( claraDataSetView ); 
+		claraPlot->replot();
+	}
+	
+
+	if (pamCheckBox->isChecked())
+	{
+		pamDataSet->PAM_calculateNewCentroids();
+		pamDataSet->calculateAssociations();
+		pamPlotCurve->attachToDataSet( pamDataSetView ); 
+		pamPlot->replot();
+	}
+}
+
+void MainWindowImpl::on_actionAbout_triggered()
+{
+	QMessageBox::information( this, "About", 
+		"Data Mining application, Braude 2008 \n"
+		"\n"
+		"  Diego Iastrubni - diegoiast@gmail.com\n"
+		"  Eyad Abo El Zalaf` - eyad1983@gmail.com"
+	);
 }

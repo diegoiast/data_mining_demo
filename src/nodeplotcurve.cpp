@@ -23,6 +23,7 @@ Qt::GlobalColor clusterColors[] =
 	Qt::yellow,
 	Qt::magenta,
 	Qt::cyan,
+	Qt::darkGray
 };
 
 
