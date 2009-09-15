@@ -85,7 +85,7 @@ void NodesPlotCurve::drawSymbols(QPainter *painter,
 			
 		const int xi = xMap.transform(p.x());
 		const int yi = yMap.transform(p.y());
-		QColor c = QColor(clusterColors[i] ).lighter();
+		QColor c = QColor(clusterColors[i] ).lighter( 175 );
 		QRect rect;
 		
 		rect.moveCenter(QPoint(xi, yi));

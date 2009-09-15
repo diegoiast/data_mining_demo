@@ -15,7 +15,7 @@
 
 // size of the input table
 #define SIZE_X			256
-#define SIZE_Y			1024
+#define SIZE_Y			2*2024
 
 // this is in millisecconds
 #define UPDATE_TIMER		750
@@ -146,7 +146,7 @@ void MainWindowImpl::on_actionLoad_triggered()
 	};
 
 	on_actionProcess_triggered();
-	dataTab->setCurrentIndex( 1 );
+	dataTab->setCurrentIndex( 2 );
 	statusBar()->showMessage( tr("File %1 loaded").arg(fileName), MESSAGE_TIMEOUT );
 }
 
@@ -195,21 +195,22 @@ void MainWindowImpl::on_actionRandom3D_triggered()
 
 void MainWindowImpl::on_actionProcess_triggered()
 {
+	if (updateTimer!=0)
+		killTimer( updateTimer );
+		
 	populateDataSet();
 	
 	kmeansDataSet->KMeans_init( centroidsNumber->value() );
-	kmeansPlotCurve->attach( kmeansPlot );
+	kmeansPlotCurve->attachToDataSet( kmeansDataSetView );
 	kmeansPlot->replot();
 	
-	claraDataSet->KMeans_init( centroidsNumber->value() );
-	claraPlotCurve->attach( claraPlot );
+	claraDataSet->PAM_init( centroidsNumber->value() );
+	claraPlotCurve->attachToDataSet( claraDataSetView ); 
 	claraPlot->replot();
 	
 	if (claraDataSet->getItemCount() == 0)
 		return;
-		
-	if (updateTimer!=0)
-		killTimer( updateTimer );
+	
 	updateTimer = startTimer( UPDATE_TIMER );
 }
 
@@ -220,7 +221,7 @@ void MainWindowImpl::timerEvent(QTimerEvent *event)
 	kmeansPlotCurve->attachToDataSet( kmeansDataSetView ); 
 	kmeansPlot->replot();
 
-	claraDataSet->KMeans_calculateNewCentroids();
+	claraDataSet->PAM_calculateNewCentroids();
 	claraDataSet->calculateAssociations();
 	claraPlotCurve->attachToDataSet( claraDataSetView ); 
 	claraPlot->replot();

@@ -101,8 +101,32 @@ int	DataSet::getCentroidCount()
 	return m_centroids.count();
 }
 
+//
+double	DataSet::scattering()
+{
+	double d = 0;
+	foreach( DataSetItem *item, m_items )
+	{
+		d += item->m_distance;
+	}
+	
+	return d;
+}
+
+int	DataSet::nextUnassociatedMedoid()
+{
+	int i = 0;
+	for( int k=0; k<m_centroids.count(); k++ )
+	{
+		if (m_centroids[k].count() != 0)
+			i ++;
+	}
+	
+	return i;
+}
+
 /// calculate the best association of each item to the closest centroid 
-void DataSet::calculateAssociations()
+void	DataSet::calculateAssociations()
 {
 	// clear older assosiation
 	foreach( DataSetItem *item, m_items )
@@ -115,12 +139,17 @@ void DataSet::calculateAssociations()
 	foreach( DataSetItem *item,  m_items )
 	{
 		item->m_cluster = -1;
+		item->m_distance = -1;
 		
 		for( int k=0; k<m_centroids.count(); k++ )
 		{
 			QVector<double> centroid = m_centroids.at( k );
-			double d = distance( item->m_coordinates,centroid );
 			
+			// what if this centroid/medoid has not been assigned a coordinate yet?
+			if (centroid.count() == 0)
+				continue;
+				
+			double d = distance( item->m_coordinates,centroid );			
 			if ((item->m_distance == -1) || (d < item->m_distance))
 			{
 				item->m_distance = d;
@@ -133,7 +162,6 @@ void DataSet::calculateAssociations()
 /// kmeans algorithm - initialize the centroids to a random items
 void DataSet::KMeans_init( int centroidsNumber )
 {
-
 	// choose number of centroids
 	m_centroids.clear();
 	if (m_items.count() != 0) 
@@ -145,12 +173,12 @@ void DataSet::KMeans_init( int centroidsNumber )
 				continue;
 			
 			m_centroids.append( item->m_coordinates );
-			}
+		}
 	
 	calculateAssociations();
 }
 
-/// calculate a new set of centroids by calculating the center of each cluster
+/// kmeans algorithm - calculate a new set of centroids by calculating the center of each cluster
 void DataSet::KMeans_calculateNewCentroids()
 {
 	QList< QVector<double> > newCentroids;
@@ -186,4 +214,84 @@ void DataSet::KMeans_calculateNewCentroids()
 	}
 	
 	m_centroids = newCentroids;
+}
+
+// PAM implementation
+
+void DataSet::PAM_init( int centroidsNumber )
+{
+	// choose number of centroids
+	m_centroids.clear();
+	if (m_items.count() == 0)
+		return;
+ 
+ 	// assign new medoids, with empty coordinates
+	for( int i=0; i<centroidsNumber; i++ )
+	{
+		QVector<double> d;
+		m_centroids.append( d );
+	}
+	
+	
+	calculateAssociations();
+}
+
+void DataSet::PAM_calculateNewCentroids()
+{
+	int k = nextUnassociatedMedoid();
+	
+	if (k != m_centroids.count())
+	{	// we still need to find the first k medoids
+		PAM_stage1( k );
+	}
+	else
+	{	// find better medoids
+		PAM_stage2();
+	}
+}
+
+void DataSet::PAM_stage1( int medoidToCalculate )
+{
+	
+	DataSetItem *bestMedoid = NULL;
+	double bestScatter = -1;
+	
+	foreach( DataSetItem *item, m_items )
+	{
+		m_centroids[medoidToCalculate] = item->m_coordinates;
+		calculateAssociations();
+		double currentScattering = scattering();
+		
+		if ((bestScatter == -1) || ( currentScattering < bestScatter))
+		{
+			bestScatter = currentScattering;
+			bestMedoid = item;
+		}
+		else	// revert the medoid association
+			m_centroids[medoidToCalculate] = bestMedoid->m_coordinates;
+	}
+}
+
+void DataSet::PAM_stage2()
+{
+	// now, we choose a random demoid and assign it a new item. if it's better -> we win
+	int k = rand() % m_centroids.count();
+	int l = rand() % m_items.count();
+	
+	//qDebug("%s - %d: choosing a new medoid: %d->[%f:%f]", __FILE__, __LINE__, k, m_items[l]->m_coordinates[0], m_items[l]->m_coordinates[1] );
+
+	double oldScatter = scattering();
+	QVector<double> oldCoordinates = m_centroids[k];
+	m_centroids[k] = m_items[l]->m_coordinates;
+	calculateAssociations();
+	double newScatter = scattering();
+	 
+	if (oldScatter < newScatter )
+	{	// revert the association
+		m_centroids[k] = oldCoordinates;
+		calculateAssociations(); 
+		qDebug("%s - %d: reverting medoid, scattering (%f->%f)", __FILE__, __LINE__, oldScatter, newScatter );
+	}
+	else
+		qDebug("%s - %d: using medoid, scattering (%f->%f)", __FILE__, __LINE__, oldScatter, newScatter );
 }

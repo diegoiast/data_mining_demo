@@ -60,14 +60,26 @@ public:
 	QVector<double>	getCentroid( int number );
 	QPointF		getCentroidPF( int number );
 	int		getCentroidCount();
+	
+	double		scattering();
+	int		nextUnassociatedMedoid();
 
 	/// calculate the best association of each item to the closest centroid 
 	void calculateAssociations();
 
-	/// kmeans algorithm - initialize the centroids to a random items
+	/// KMeans algorithm - initialize the centroids to a random items
 	void KMeans_init( int centroidsNumber );	
-	/// calculate a new set of centroids by calculating the center of each centroid
+	/// KMeans algorithm - calculate a new set of centroids by calculating the center of each centroid
 	void KMeans_calculateNewCentroids();
+	
+	
+	/// PAM algorithm - initialize the centroids to a random items
+	void PAM_init( int centroidsNumber );
+	/// PAM algorithm - calculate a new set of centroids by calculating the center of each centroid
+	void PAM_calculateNewCentroids();
+	
+	void PAM_stage1( int medoidToCalculate );
+	void PAM_stage2();
 	
 private:
 	QList <DataSetItem*>		m_items;
