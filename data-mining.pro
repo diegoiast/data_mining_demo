@@ -1,11 +1,3 @@
-TEMPLATE = app
-QT = gui core
-CONFIG += qt warn_on console release
-OBJECTS_DIR = build
-MOC_DIR = build
-UI_DIR = build
-FORMS = ui/mainwindow.ui
-HEADERS = src/mainwindowimpl.h
-SOURCES = src/mainwindowimpl.cpp src/main.cpp
-INCLUDEPATH = d:\source\qwt-5.0.2\src
-LIBS = d:\source\qwt-5.0.2\lib\libqwt5.a
+TEMPLATE        = subdirs
+CONFIG          += ordered
+SUBDIRS         = qwt-5.0.2/qwt.pro src/data-mining.pro
