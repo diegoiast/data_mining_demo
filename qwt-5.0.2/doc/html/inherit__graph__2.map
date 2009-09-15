@@ -1,0 +1,4 @@
+base referer
+rect $class_qwt_color_map.html 7,31 111,55
+rect $class_qwt_alpha_color_map.html 162,7 298,31
+rect $class_qwt_linear_color_map.html 160,55 299,79

@@ -1,0 +1,7 @@
+base referer
+rect $class_qwt_picker_machine.html 7,103 140,127
+rect $class_qwt_picker_click_point_machine.html 188,7 380,31
+rect $class_qwt_picker_click_rect_machine.html 190,55 379,79
+rect $class_qwt_picker_drag_point_machine.html 188,103 380,127
+rect $class_qwt_picker_drag_rect_machine.html 190,151 379,175
+rect $class_qwt_picker_polygon_machine.html 195,199 374,223

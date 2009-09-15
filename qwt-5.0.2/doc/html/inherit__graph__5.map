@@ -1,0 +1,5 @@
+base referer
+rect $class_qwt_data.html 7,55 82,79
+rect $class_qwt_array_data.html 143,7 247,31
+rect $class_qwt_c_pointer_data.html 132,55 258,79
+rect $class_qwt_polygon_f_data.html 131,103 259,127

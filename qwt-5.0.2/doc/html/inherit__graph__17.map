@@ -1,0 +1,3 @@
+base referer
+rect $class_qwt_panner.html 7,7 95,31
+rect $class_qwt_plot_panner.html 143,7 255,31

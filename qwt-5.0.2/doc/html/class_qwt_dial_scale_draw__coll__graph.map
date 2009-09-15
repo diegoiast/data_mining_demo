@@ -1,0 +1,6 @@
+base referer
+rect $class_qwt_round_scale_draw.html 19,163 168,187
+rect $class_qwt_abstract_scale_draw.html 7,85 164,109
+rect $class_qwt_dial.html 196,163 263,187
+rect $class_qwt_abstract_slider.html 188,85 316,109
+rect $class_qwt_double_range.html 190,8 315,32

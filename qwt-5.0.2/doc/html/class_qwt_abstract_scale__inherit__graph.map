@@ -1,0 +1,4 @@
+base referer
+rect $class_qwt_knob.html 7,83 84,107
+rect $class_qwt_slider.html 108,83 188,107
+rect $class_qwt_thermo.html 212,83 303,107
