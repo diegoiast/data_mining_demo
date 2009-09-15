@@ -36,7 +36,7 @@ CONFIG           += release     # release/debug
 # it will be a static library.
 ######################################################################
 
-CONFIG           += QwtDll
+#CONFIG           += QwtDll
 
 ######################################################################
 # QwtPlot enables all classes, that are needed to use the QwtPlot 
