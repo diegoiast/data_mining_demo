@@ -5,9 +5,11 @@
 
 #include "qwt_scale_map.h"
 #include "qwt_symbol.h"
-
 #include "nodeplotcurve.h"
-#include "nodecollection.h"
+
+#include "datasetview.h"
+#include "dataset.h"
+
 
 Qt::GlobalColor clusterColors[] = 
 {
@@ -18,31 +20,34 @@ Qt::GlobalColor clusterColors[] =
 	Qt::darkMagenta,
 	Qt::darkYellow,
 	Qt::lightGray,
+	Qt::yellow,
+	Qt::magenta,
+	Qt::cyan,
 };
 
 
 NodesPlotCurve::NodesPlotCurve(const QwtText &title) 
 	: QwtPlotCurve (title)
 {
-	nodeCollection = NULL;
+	m_dataSetView = NULL;
 }
 
 
 NodesPlotCurve::NodesPlotCurve(const QString &title)
 	: QwtPlotCurve (title)
 {
-	nodeCollection = NULL;
+	m_dataSetView = NULL;
 }
 
-void NodesPlotCurve::setNodeCollection( NodeCollection *collection )
+void NodesPlotCurve::attachToDataSet(DataSetView *newDataSetView)
 {
-	nodeCollection = collection;
-	setData(*collection);
+	m_dataSetView = newDataSetView;
+	setData( *newDataSetView );
 }
 
-NodeCollection* NodesPlotCurve::getNodeCollection()
+DataSetView* NodesPlotCurve::getDataSetView()
 {
-	return nodeCollection;
+	return m_dataSetView;
 }
 
 void NodesPlotCurve::drawSymbols(QPainter *painter,
@@ -52,8 +57,11 @@ void NodesPlotCurve::drawSymbols(QPainter *painter,
 {
 	for (int i = from; i <= to; i++)
 	{
-		int clusterNumber = nodeCollection? nodeCollection->cluster(i) : -1;
-		QColor c = (clusterNumber != -1) ? QColor(clusterColors[clusterNumber] ) : Qt::black;  
+		int clusterNumber= -1;
+		if (m_dataSetView)
+			clusterNumber = m_dataSetView->cluster( i );
+		
+		QColor c = (clusterNumber != -1) ? QColor(clusterColors[clusterNumber] ) : Qt::white;  
 		const int xi = xMap.transform(x(i));
 		const int yi = yMap.transform(y(i));
 		QRect rect;
@@ -62,20 +70,26 @@ void NodesPlotCurve::drawSymbols(QPainter *painter,
 		painter->setPen( QPen(c) );
 		symbol.draw(painter, rect);
 	}
-	if (!nodeCollection)
-		return;
 	
 	// draw centroids
-	for( int i=0; i<nodeCollection->centroids.size(); i ++ )
+	int centroidsCount = 0;
+	if ((m_dataSetView) && (m_dataSetView->getDataSet()))
+		centroidsCount = m_dataSetView->getDataSet()->getCentroidCount();
+	else
+		return;
+		
+	for( int i=0; i<centroidsCount; i ++ )
 	{
-		QPointF p = nodeCollection->centroids.at(i);
+		QPointF p;
+		p = m_dataSetView->getDataSet()->getCentroidPF( i );
+			
 		const int xi = xMap.transform(p.x());
 		const int yi = yMap.transform(p.y());
 		QColor c = QColor(clusterColors[i] ).lighter();
 		QRect rect;
 		
 		rect.moveCenter(QPoint(xi, yi));
-		painter->setPen( QPen(c) );
+		painter->setPen(c);
 		
 		for( int k=0; k<5; k++) 
 		{

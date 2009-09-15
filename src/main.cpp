@@ -1,8 +1,6 @@
-#include <cstdlib>
-#include "mainwindowimpl.h"
 #include <QApplication>
+#include "mainwindowimpl.h"
 
-// real 
 int main(int argc, char ** argv)
 {
 	QApplication app( argc, argv );

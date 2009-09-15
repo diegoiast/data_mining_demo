@@ -136,7 +136,7 @@
              <number>1</number>
             </property>
             <property name="maximum" >
-             <number>8</number>
+             <number>10</number>
             </property>
             <property name="singleStep" >
              <number>1</number>
@@ -238,9 +238,11 @@
    <attribute name="toolBarBreak" >
     <bool>false</bool>
    </attribute>
+   <addaction name="actionClearDataSet" />
    <addaction name="actionLoad" />
    <addaction name="actionRandom2D" />
    <addaction name="actionRandom3D" />
+   <addaction name="actionSwitchView" />
    <addaction name="actionProcess" />
    <addaction name="separator" />
    <addaction name="actionQuit" />
@@ -248,6 +250,9 @@
   <action name="actionLoad" >
    <property name="text" >
     <string>Load</string>
+   </property>
+   <property name="shortcut" >
+    <string>F3</string>
    </property>
   </action>
   <action name="actionRandom2D" >
@@ -268,6 +273,22 @@
   <action name="actionProcess" >
    <property name="text" >
     <string>Process</string>
+   </property>
+  </action>
+  <action name="actionClearDataSet" >
+   <property name="text" >
+    <string>Clear</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionSwitchView" >
+   <property name="text" >
+    <string>SwitchView</string>
+   </property>
+   <property name="shortcut" >
+    <string>F12</string>
    </property>
   </action>
  </widget>

@@ -3,14 +3,12 @@
 
 #include <QMainWindow>
 #include <QList>
+
 #include "ui_mainwindow.h"
 
-#include "nodecollection.h"
-#include "nodeplotcurve.h"
-
 class NodesPlotCurve;
-class NodeCollection;
-//class QwtPlotCurve;
+class DataSet;
+class DataSetView;
 
 class MainWindowImpl : public QMainWindow, public Ui::MainWindow
 {
@@ -18,18 +16,27 @@ Q_OBJECT
 public:
 	MainWindowImpl( QWidget* parent = 0, Qt::WFlags f = 0 );
 	void setRandomData( int dimentions );
+	void populateDataSet();
+	
 private slots:
+	void on_actionLoad_triggered();
+	void on_actionClearDataSet_triggered();
+	void on_actionSwitchView_triggered();
 	void on_actionRandom2D_triggered(bool checked);
 	void on_actionRandom3D_triggered();
 	void on_actionProcess_triggered();
 	void timerEvent(QTimerEvent *event);
 private:
-	NodesPlotCurve* kmeansSamples;
-	NodesPlotCurve* claraSamples;
+	int updateTimer; 
 	
-	NodeCollection* claraList; 
-	NodeCollection* kmeansList;
-	int kmeansTimer; 
+	// new code, MVC
+	DataSet*	kmeansDataSet;
+	DataSetView*	kmeansDataSetView;
+	NodesPlotCurve* kmeansPlotCurve;
+
+	DataSet*	claraDataSet;
+	DataSetView*	claraDataSetView;
+	NodesPlotCurve* claraPlotCurve;
 };
 
 #endif
