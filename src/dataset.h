@@ -8,7 +8,7 @@
 #ifndef DATASET_H
 #define DATASET_H
 
-#include <QVector>
+#include <vector>
 #include <QList>
 #include <QPointF>
 
@@ -18,26 +18,27 @@ class DataSetItem
 {
 public:
 	DataSetItem( double xx, double yy, int cc=-1, double dd=-1 ) {
-		m_coordinates << xx;
-		m_coordinates << yy;
+		m_coordinates.push_back(xx);
+		m_coordinates.push_back(yy);
 		m_cluster = cc;
 		m_distance = dd;
 	};
-	DataSetItem( QVector<double> coordinates_in, int cc=-1, double dd=-1 ) {
+
+	DataSetItem( std::vector<double> coordinates_in, int cc=-1, double dd=-1 ) {
 		m_coordinates = coordinates_in;
 		m_cluster = cc;
 		m_distance = dd;
 	};
-	
-	/// return the 2D coordinates of this data set item
+/*	/// return the 2D coordinates of this data set item
 	/// note that this is not always valid
 	QPointF location() {
 		return QPointF( m_coordinates[0],m_coordinates[0] );
 	}
+*/	
 	
 	/// the coordinates of this node. is not ganranteed to be a 2D
 	/// dataset item
-	QVector<double> m_coordinates;
+	std::vector<double> m_coordinates;
 	
 	/// the cluster this item belongs to. -1 notes it has not been
 	/// assigned a cluster 
@@ -58,15 +59,15 @@ public:
 	
 	int		getItemCount();
 	void		addItem( double x, double y );
-	void		addItem( QVector<double> coordinates );
+	void		addItem( std::vector<double> coordinates );
 	DataSetItem*	getItem( int number );
-	double		distance( QVector<double> &p1, QVector<double> &p2 );
-	double		distance_euclid( QVector<double> &p1, QVector<double> &p2 );
-	double		distance_manhattan( QVector<double> &p1, QVector<double> &p2 );
+	double		distance( std::vector<double> &p1, std::vector<double> &p2 );
+	double		distance_euclid( std::vector<double> &p1, std::vector<double> &p2 );
+	double		distance_manhattan( std::vector<double> &p1, std::vector<double> &p2 );
 	
-	QVector<double>	getCentroid( int number );
-	QPointF		getCentroidPF( int number );
-	int		getCentroidCount();
+	std::vector<double>	getCentroid( int number );
+//	QPointF		getCentroidPF( int number );
+	int			getCentroidCount();
 	
 	// helper functions for PAM
 	double		scattering();
@@ -105,8 +106,8 @@ public:
 	
 private:
 	bool				m_finished;
-	QList <DataSetItem*>		m_items;
-	QList< QVector<double> >	m_centroids;
+	std::vector<DataSetItem*>		m_items;
+	std::vector< std::vector<double> >	m_centroids;
 	
 	// PAM shite
 	int m_pamStage2_medoid;

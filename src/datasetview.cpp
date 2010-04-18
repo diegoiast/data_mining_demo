@@ -41,7 +41,7 @@ double	DataSetView::x( size_t i ) const
 	if (item==NULL)
 		return 0;
 		
-	if (item->m_coordinates.count()<1)
+	if (item->m_coordinates.size()<1)
 		return 0;
 	
 	// remember, coordinates are 0 based 
@@ -57,7 +57,7 @@ double	DataSetView::y( size_t i ) const
 	if (item==NULL)
 		return 0;
 		
-	if (item->m_coordinates.count()<2)
+	if (item->m_coordinates.size()<2)
 		return 0;
 	
 	// remember, coordinates are 0 based 

@@ -89,7 +89,17 @@ void NodesPlotCurve::drawSymbols(QPainter *painter,
 	for( int i=0; i<centroidsCount; i ++ )
 	{
 		QPointF p;
-		p = m_dataSetView->getDataSet()->getCentroidPF( i );
+		std::vector<double> centroid = m_dataSetView->getDataSet()->getCentroid( i );
+		
+		if (centroid.empty()){
+			// TODO this is clearly a workaround:
+			qDebug("%s - %d: empty centroid (%d)", __FILE__, __LINE__, i);
+			DataSetItem *item  = m_dataSetView->getDataSet()->getItem(0);
+			centroid.push_back(item->m_coordinates.at(0));
+			centroid.push_back(item->m_coordinates.at(1));
+		}
+		p.setX(centroid[0]);
+		p.setY(centroid[1]);
 			
 		const int xi = xMap.transform(p.x());
 		const int yi = yMap.transform(p.y());

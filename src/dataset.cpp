@@ -5,8 +5,10 @@
  * License GPLv3, 2008,2009
  */
 
-#include <math.h>
-#include <QString>
+#include <cstdlib>
+#include <cmath>
+#include <QDebug>
+
 #include "dataset.h"
 
 // un comment this for large debug output
@@ -37,12 +39,12 @@ int	DataSet::getItemCount()
 
 void	DataSet::addItem( double x, double y )
 {
-	m_items << new DataSetItem( x, y );
+	m_items.push_back(new DataSetItem( x, y ));
 }
 
-void	DataSet::addItem( QVector<double> coordinates )
+void	DataSet::addItem( std::vector<double> coordinates )
 {
-	m_items << new DataSetItem( coordinates );
+	m_items.push_back(new DataSetItem(coordinates));
 }
 
 DataSetItem*	DataSet::getItem( int number )
@@ -55,17 +57,17 @@ DataSetItem*	DataSet::getItem( int number )
 
 // assumption: both p1 and p2 have the same number of
 // items, oordinates
-double	DataSet::distance( QVector<double> &p1, QVector<double> &p2 )
+double	DataSet::distance( std::vector<double> &p1, std::vector<double> &p2 )
 {
 	return distance_euclid( p1, p2 );
 	//return distance_manhattan( p1, p2 );
 }
 
-double	DataSet::distance_euclid( QVector<double> &p1, QVector<double> &p2 )
+double	DataSet::distance_euclid( std::vector<double> &p1, std::vector<double> &p2 )
 {
 	double d = 0;
 	
-	for( int i=0; i<p1.count(); i++ )
+	for( int i=0; i<p1.size(); i++ )
 	{
 		double f = p1[i] - p2[i];
 		d += f*f;
@@ -74,11 +76,11 @@ double	DataSet::distance_euclid( QVector<double> &p1, QVector<double> &p2 )
 	return sqrt(d);
 }
 
-double	DataSet::distance_manhattan( QVector<double> &p1, QVector<double> &p2 )
+double	DataSet::distance_manhattan( std::vector<double> &p1, std::vector<double> &p2 )
 {
 	double d = 0;
 	
-	for( int i=0; i<p1.count(); i++ )
+	for( int i=0; i<p1.size(); i++ )
 	{
 		d += fabs(p1[i] - p2[i]);
 	}
@@ -87,15 +89,16 @@ double	DataSet::distance_manhattan( QVector<double> &p1, QVector<double> &p2 )
 }
 
 
-QVector<double>	DataSet::getCentroid( int number )
+std::vector<double>	DataSet::getCentroid( int number )
 {
-	QVector<double> v;
+	std::vector<double> v;
 	if (number <= m_centroids.size())
 		v = m_centroids.at(number);
 		
 	return v;
 }
 
+/*
 QPointF	DataSet::getCentroidPF( int number )
 {
 	QPointF p;
@@ -113,19 +116,19 @@ QPointF	DataSet::getCentroidPF( int number )
 		
 	return p;
 }
-
+*/
 int	DataSet::getCentroidCount()
 {
-	return m_centroids.count();
+	return m_centroids.size();
 }
 
 //
 double	DataSet::scattering()
 {
 	double d = 0;
-	foreach( DataSetItem *item, m_items )
+	for( int i=0; i< m_items.size(); i++)	
 	{
-		d += item->m_distance;
+		d += m_items[i]->m_distance;
 	}
 	
 	return d;
@@ -134,9 +137,9 @@ double	DataSet::scattering()
 int	DataSet::nextUnassociatedMedoid()
 {
 	int i = 0;
-	for( int k=0; k<m_centroids.count(); k++ )
+	for( int k=0; k<m_centroids.size(); k++ )
 	{
-		if (m_centroids[k].count() != 0)
+		if (m_centroids[k].size() != 0)
 			i ++;
 	}
 	
@@ -147,31 +150,31 @@ int	DataSet::nextUnassociatedMedoid()
 void	DataSet::calculateAssociations()
 {
 	// clear older assosiation
-	foreach( DataSetItem *item, m_items )
+	for( int i=0; i< m_items.size(); i++)	
 	{
-		item->m_distance = -1;
-		item->m_cluster = -1;
+		m_items[i]->m_distance = -1;
+		m_items[i]->m_cluster = -1;
 	}
 	
 	// assign each node to a cluster
-	foreach( DataSetItem *item,  m_items )
+	for( int i=0; i< m_items.size(); i++)	
 	{
-		item->m_cluster = -1;
-		item->m_distance = -1;
+		m_items[i]->m_cluster = -1;
+		m_items[i]->m_distance = -1;
 		
-		for( int k=0; k<m_centroids.count(); k++ )
+		for( int k=0; k<m_centroids.size(); k++ )
 		{
-			QVector<double> centroid = m_centroids.at( k );
+			std::vector<double> centroid = m_centroids.at( k );
 			
 			// what if this centroid/medoid has not been assigned a coordinate yet?
-			if (centroid.count() == 0)
+			if (centroid.size() == 0)
 				continue;
 				
-			double d = distance( item->m_coordinates,centroid );			
-			if ((item->m_distance == -1) || (d < item->m_distance))
+			double d = distance( m_items[i]->m_coordinates,centroid );			
+			if ((m_items[i]->m_distance == -1) || (d < m_items[i]->m_distance))
 			{
-				item->m_distance = d;
-				item->m_cluster = k;
+				m_items[i]->m_distance = d;
+				m_items[i]->m_cluster = k;
 			}
 		}
 	}
@@ -179,16 +182,16 @@ void	DataSet::calculateAssociations()
 
 DataSet* DataSet::reducedDataSet( float factor )
 {
-	long newItemCount = lround( factor * m_items.count()); 
+	long newItemCount = lround( factor * m_items.size()); 
 	DataSet *newDataSet = new DataSet;
 	
 	for (int i=0; i<newItemCount; i ++ )
 	{
 		// choose a new random item
-		int m = rand() % m_items.count();
+		int m = std::rand() % m_items.size();
 		
 		DataSetItem *item = new DataSetItem( m_items[m]->m_coordinates );
-		newDataSet->m_items << item;
+		newDataSet->m_items.push_back(item);
 	}
 	
 	return newDataSet;
@@ -200,15 +203,17 @@ void DataSet::KMeans_init( int centroidsNumber )
         m_finished = false;
 	// choose number of centroids
 	m_centroids.clear();
-	if (m_items.count() != 0) 
+	if (m_items.size() != 0) 
 		for( int i=0; i<centroidsNumber; i++ )
 		{
-			int k = rand() % m_items.count();
+			int k = rand() % m_items.size();
 			DataSetItem *item = m_items.at( k );
-			if (!item) 
+			if (!item) {
+				qDebug("%s - %d - warning, choosed a centroid index outside the dataset", __FILE__, __LINE__ );
 				continue;
+			}
 			
-			m_centroids.append( item->m_coordinates );
+			m_centroids.push_back(item->m_coordinates);
 		}
 	
 	calculateAssociations();
@@ -217,27 +222,27 @@ void DataSet::KMeans_init( int centroidsNumber )
 /// kmeans algorithm - calculate a new set of centroids by calculating the center of each cluster
 void DataSet::KMeans_calculateNewCentroids()
 {
-	QList< QVector<double> > newCentroids;
+	std::vector< std::vector<double> > newCentroids;
 	
 	for( int k=0; k<m_centroids.size(); k++ )
 	{
 		int count = 0;
-		QVector<double> d;
+		std::vector<double> coordinates;
+		coordinates.push_back(0);
+		newCentroids.push_back(coordinates);
 		
-		// make a new meta centroid
-		newCentroids.append( d );
-		
-		foreach( DataSetItem *item, m_items )
+		for ( int i=0; i<m_items.size(); i++ )
 		{
+			DataSetItem *item = m_items[i];
 			if (item->m_cluster != k )
 				continue;
 		
-			for( int j=0; j< item->m_coordinates.size(); j++ )
+			for( int j=0; j<item->m_coordinates.size(); j++ )
 			{
 				// if this new item has more coordinates then the centroid
 				// add a new zero coordinate to the centroid
 				if (newCentroids[k].size()-1 < j)
-					newCentroids[k].append( 0 );
+					newCentroids[k].push_back(0);
 				
 				newCentroids[k][j] += item->m_coordinates[j];
 			}
@@ -259,14 +264,14 @@ void DataSet::PAM_init( int centroidsNumber )
         m_finished = false;
         // choose number of centroids
 	m_centroids.clear();
-	if (m_items.count() == 0)
+	if (m_items.size() == 0)
 		return;
  
  	// assign new medoids, with empty coordinates
 	for( int i=0; i<centroidsNumber; i++ )
 	{
-		QVector<double> d;
-		m_centroids.append( d );
+		std::vector<double> d;
+		m_centroids.push_back( d );
 	}
 	
 	
@@ -277,7 +282,7 @@ void DataSet::PAM_calculateNewCentroids()
 {
 	int k = nextUnassociatedMedoid();
 	
-	if (k != m_centroids.count())
+	if (k != m_centroids.size())
 	{	// we still need to find the first k medoids
 		PAM_stage1( k );
 	}
@@ -293,8 +298,7 @@ void DataSet::PAM_stage1( int medoidToCalculate )
 	DataSetItem *bestMedoid = NULL;
 	double bestScatter = -1;
 	
-	//foreach( DataSetItem *item, m_items )
-	for( int m=0; m<m_items.count(); m++ )
+	for( int m=0; m<m_items.size(); m++ )
 	{
 		DataSetItem *item = m_items[m];
 		m_centroids[medoidToCalculate] = item->m_coordinates;
@@ -334,7 +338,7 @@ void DataSet::PAM_stage2()
 	//qDebug("%s - %d: pam stage 2, medoids: %d/%d, item: %d/%d", __FILE__, __LINE__, k, m_centroids.count(), l, m_items.count() );
 
 	double oldScatter = scattering();
-	QVector<double> oldCoordinates = m_centroids[k];
+	std::vector<double> oldCoordinates = m_centroids[k];
 	m_centroids[k] = m_items[l]->m_coordinates;
 	calculateAssociations();
 	double newScatter = scattering();
@@ -356,12 +360,12 @@ void DataSet::PAM_stage2()
         }
 	
 	m_pamStage2_item ++;
-	if (m_pamStage2_item == m_items.count())
+	if (m_pamStage2_item == m_items.size())
 	{
 		m_pamStage2_item = 0;
 		m_pamStage2_medoid++;
 		
-		if (m_pamStage2_medoid == m_centroids.count())
+		if (m_pamStage2_medoid == m_centroids.size())
 		{
 			m_finished = true;
 #ifdef __DATASET_DEBUG_
