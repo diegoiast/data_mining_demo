@@ -47,7 +47,7 @@ void	DataSet::addItem( std::vector<double> coordinates )
 	m_items.push_back(new DataSetItem(coordinates));
 }
 
-DataSetItem*	DataSet::getItem( int number )
+DataSetItem*	DataSet::getItem( size_t number )
 {
 	if (number < m_items.size())
 		return m_items.at(number);
@@ -66,13 +66,11 @@ double	DataSet::distance( std::vector<double> &p1, std::vector<double> &p2 )
 double	DataSet::distance_euclid( std::vector<double> &p1, std::vector<double> &p2 )
 {
 	double d = 0;
-	
-	for( int i=0; i<p1.size(); i++ )
-	{
-		double f = p1[i] - p2[i];
+	std::vector<double>::iterator i1, i2;
+	for( i1=p1.begin(), i2=p2.begin(); i1!=p1.end() && i2!=p2.end(); i1++, i2++) {
+		double f = (*i1) - (*i2);
 		d += f*f;
 	}
-	
 	return sqrt(d);
 }
 
@@ -80,16 +78,16 @@ double	DataSet::distance_manhattan( std::vector<double> &p1, std::vector<double>
 {
 	double d = 0;
 	
-	for( int i=0; i<p1.size(); i++ )
-	{
-		d += fabs(p1[i] - p2[i]);
+	std::vector<double>::iterator i1, i2;
+	for( i1=p1.begin(), i2=p2.begin(); i1!=p1.end() && i2!=p2.end(); i1++, i2++) {
+		d += fabs((*i1)-(*i2));
 	}
 	
 	return d;
 }
 
 
-std::vector<double>	DataSet::getCentroid( int number )
+std::vector<double>	DataSet::getCentroid( size_t number )
 {
 	std::vector<double> v;
 	if (number <= m_centroids.size())
@@ -126,9 +124,9 @@ int	DataSet::getCentroidCount()
 double	DataSet::scattering()
 {
 	double d = 0;
-	for( int i=0; i< m_items.size(); i++)	
-	{
-		d += m_items[i]->m_distance;
+	std::vector<DataSetItem*>::iterator i;
+	for(i=m_items.begin(); i!=m_items.end(); i++){
+		d += (*i)->m_distance;
 	}
 	
 	return d;
@@ -136,46 +134,44 @@ double	DataSet::scattering()
 
 int	DataSet::nextUnassociatedMedoid()
 {
-	int i = 0;
-	for( int k=0; k<m_centroids.size(); k++ )
-	{
-		if (m_centroids[k].size() != 0)
-			i ++;
+	int n = 0;
+	std::vector< std::vector<double> >::iterator i;
+	for( i=m_centroids.begin(); i!=m_centroids.end(); i++){
+		if ((*i).size() != 0)
+			n ++;
 	}
 	
-	return i;
+	return n;
 }
 
 /// calculate the best association of each item to the closest centroid 
 void	DataSet::calculateAssociations()
 {
+	std::vector<DataSetItem*>::iterator item;
 	// clear older assosiation
-	for( int i=0; i< m_items.size(); i++)	
-	{
-		m_items[i]->m_distance = -1;
-		m_items[i]->m_cluster = -1;
+	for( item=m_items.begin(); item!=m_items.end(); item++ ){
+		(*item)->m_distance = -1;
+		(*item)->m_cluster = -1;
 	}
 	
 	// assign each node to a cluster
-	for( int i=0; i< m_items.size(); i++)	
-	{
-		m_items[i]->m_cluster = -1;
-		m_items[i]->m_distance = -1;
+	for( item=m_items.begin(); item!=m_items.end(); item++ ){
+		(*item)->m_cluster  = -1;
+		(*item)->m_distance = -1;
 		
-		for( int k=0; k<m_centroids.size(); k++ )
-		{
-			std::vector<double> centroid = m_centroids.at( k );
-			
+		std::vector< std::vector<double> >::iterator centroid;
+		int k = 0;
+		for( centroid=m_centroids.begin(); centroid!=m_centroids.end(); centroid++){
 			// what if this centroid/medoid has not been assigned a coordinate yet?
-			if (centroid.size() == 0)
+			if ( (*centroid).size() == 0)
 				continue;
 				
-			double d = distance( m_items[i]->m_coordinates,centroid );			
-			if ((m_items[i]->m_distance == -1) || (d < m_items[i]->m_distance))
-			{
-				m_items[i]->m_distance = d;
-				m_items[i]->m_cluster = k;
+			double d = distance((*item)->m_coordinates,*centroid);
+			if (((*item)->m_distance == -1) || (d < (*item)->m_distance)) {
+				(*item)->m_distance = d;
+				(*item)->m_cluster  = k;
 			}
+			k++;
 		}
 	}
 }

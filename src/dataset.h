@@ -60,12 +60,12 @@ public:
 	int		getItemCount();
 	void		addItem( double x, double y );
 	void		addItem( std::vector<double> coordinates );
-	DataSetItem*	getItem( int number );
+	DataSetItem*	getItem( size_t number );
 	double		distance( std::vector<double> &p1, std::vector<double> &p2 );
 	double		distance_euclid( std::vector<double> &p1, std::vector<double> &p2 );
 	double		distance_manhattan( std::vector<double> &p1, std::vector<double> &p2 );
 	
-	std::vector<double>	getCentroid( int number );
+	std::vector<double>	getCentroid( size_t number );
 //	QPointF		getCentroidPF( int number );
 	int			getCentroidCount();
 	
