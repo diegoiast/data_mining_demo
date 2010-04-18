@@ -181,11 +181,9 @@ DataSet* DataSet::reducedDataSet( float factor )
 	long newItemCount = lround( factor * m_items.size()); 
 	DataSet *newDataSet = new DataSet;
 	
-	for (int i=0; i<newItemCount; i ++ )
-	{
+	for (int i=0; i<newItemCount; i ++ ){
 		// choose a new random item
 		int m = std::rand() % m_items.size();
-		
 		DataSetItem *item = new DataSetItem( m_items[m]->m_coordinates );
 		newDataSet->m_items.push_back(item);
 	}
@@ -199,19 +197,17 @@ void DataSet::KMeans_init( int centroidsNumber )
         m_finished = false;
 	// choose number of centroids
 	m_centroids.clear();
-	if (m_items.size() != 0) 
-		for( int i=0; i<centroidsNumber; i++ )
-		{
+	if (m_items.size() != 0) {
+		for(int i=0;i<centroidsNumber;i++){
 			int k = rand() % m_items.size();
 			DataSetItem *item = m_items.at( k );
 			if (!item) {
 				qDebug("%s - %d - warning, choosed a centroid index outside the dataset", __FILE__, __LINE__ );
 				continue;
 			}
-			
 			m_centroids.push_back(item->m_coordinates);
 		}
-	
+	}
 	calculateAssociations();
 }
 
@@ -220,36 +216,28 @@ void DataSet::KMeans_calculateNewCentroids()
 {
 	std::vector< std::vector<double> > newCentroids;
 	
-	for( int k=0; k<m_centroids.size(); k++ )
-	{
+	for( size_t k=0; k<m_centroids.size(); k++ ) {
 		int count = 0;
 		std::vector<double> coordinates;
 		coordinates.push_back(0);
 		newCentroids.push_back(coordinates);
 		
-		for ( int i=0; i<m_items.size(); i++ )
-		{
-			DataSetItem *item = m_items[i];
-			if (item->m_cluster != k )
+		std::vector<DataSetItem*>::iterator item;
+		for(item=m_items.begin(); item!=m_items.end(); item++) {
+			if ((*item)->m_cluster != k )
 				continue;
-		
-			for( int j=0; j<item->m_coordinates.size(); j++ )
-			{
+			for( size_t j=0; j<(*item)->m_coordinates.size(); j++ ) {
 				// if this new item has more coordinates then the centroid
 				// add a new zero coordinate to the centroid
 				if (newCentroids[k].size()-1 < j)
 					newCentroids[k].push_back(0);
-				
-				newCentroids[k][j] += item->m_coordinates[j];
+				newCentroids[k][j] += (*item)->m_coordinates[j];
 			}
-			
 			count ++;
 		}
-		
 		for( int j=0; j< newCentroids[k].size(); j++ )
 			newCentroids[k][j] = newCentroids[k][j]/count;
 	}
-	
 	m_centroids = newCentroids;
 }
 
