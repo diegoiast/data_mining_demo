@@ -245,20 +245,17 @@ void DataSet::KMeans_calculateNewCentroids()
 
 void DataSet::PAM_init( int centroidsNumber )
 {
-        m_finished = false;
-        // choose number of centroids
+	m_finished = false;
+	// choose number of centroids
 	m_centroids.clear();
 	if (m_items.size() == 0)
 		return;
- 
- 	// assign new medoids, with empty coordinates
-	for( int i=0; i<centroidsNumber; i++ )
-	{
+	
+	// assign new medoids, with empty coordinates
+	for( int i=0; i<centroidsNumber; i++ ) {
 		std::vector<double> d;
 		m_centroids.push_back( d );
 	}
-	
-	
 	calculateAssociations();
 }
 
@@ -266,12 +263,12 @@ void DataSet::PAM_calculateNewCentroids()
 {
 	int k = nextUnassociatedMedoid();
 	
-	if (k != m_centroids.size())
-	{	// we still need to find the first k medoids
-		PAM_stage1( k );
+	if (k != m_centroids.size()){
+		// we still need to find the first k medoids
+		PAM_stage1(k);
 	}
-	else
-	{	// find better medoids
+	else {	
+		// find better medoids
 		PAM_stage2();
 	}
 }
@@ -282,28 +279,26 @@ void DataSet::PAM_stage1( int medoidToCalculate )
 	DataSetItem *bestMedoid = NULL;
 	double bestScatter = -1;
 	
-	for( int m=0; m<m_items.size(); m++ )
-	{
-		DataSetItem *item = m_items[m];
-		m_centroids[medoidToCalculate] = item->m_coordinates;
+	std::vector<DataSetItem*>::iterator item;
+	for( item=m_items.begin(); item!=m_items.end(); item++){
+		m_centroids[medoidToCalculate] = (*item)->m_coordinates;
 		calculateAssociations();
 		double currentScattering = scattering();
 		
-		if ((bestScatter == -1) || ( currentScattering < bestScatter))
-		{
+		if ((bestScatter == -1) || ( currentScattering < bestScatter)){
 #ifdef __DATASET_DEBUG_
-                        qDebug("%s - %d: PAM_stage1 - choosing %d as centroid %d", __FILE__, __LINE__, m, medoidToCalculate );
+			qDebug("%s - %d: PAM_stage1 - choosing %d as centroid %d", __FILE__, __LINE__, m, medoidToCalculate );
 #endif
 			bestScatter = currentScattering;
-			bestMedoid = item;
+			bestMedoid = *item;
 		}
 		else	// revert the medoid association
 			m_centroids[medoidToCalculate] = bestMedoid->m_coordinates;
 	}
 	
 	m_pamStage2_medoid = 0;
-	m_pamStage2_item = 0;
-	m_finished = false;
+	m_pamStage2_item   = 0;
+	m_finished         = false;
 }
 
 void DataSet::PAM_stage2()
@@ -327,46 +322,40 @@ void DataSet::PAM_stage2()
 	calculateAssociations();
 	double newScatter = scattering();
 	 
-	if (oldScatter < newScatter )
-	{	// revert the association
+	if (oldScatter < newScatter ) {
+		// revert the association
 		m_centroids[k] = oldCoordinates;
 		calculateAssociations(); 
-
 #ifdef __DATASET_DEBUG_
 		qDebug("%s - %d: pam stage 2, reverting medoid, medoids: %d/%d, item: %d/%d, scattering (%f->%f)", __FILE__, __LINE__, k, m_centroids.count(), l, m_items.count(), oldScatter, newScatter );
 #endif
 	}
-	else
-        {
+	else {
 #ifdef __DATASET_DEBUG_
-                qDebug("%s - %d: pam stage 2, using medoid, medoids: %d/%d, item: %d/%d, scattering (%f->%f)", __FILE__, __LINE__, k, m_centroids.count(), l, m_items.count(), oldScatter, newScatter );
+		qDebug("%s - %d: pam stage 2, using medoid, medoids: %d/%d, item: %d/%d, scattering (%f->%f)", __FILE__, __LINE__, k, m_centroids.count(), l, m_items.count(), oldScatter, newScatter );
 #endif
-        }
+	}
 	
 	m_pamStage2_item ++;
-	if (m_pamStage2_item == m_items.size())
-	{
+	if (m_pamStage2_item == m_items.size()) {
 		m_pamStage2_item = 0;
 		m_pamStage2_medoid++;
 		
-		if (m_pamStage2_medoid == m_centroids.size())
-		{
+		if (m_pamStage2_medoid == m_centroids.size()) {
 			m_finished = true;
 #ifdef __DATASET_DEBUG_
-                        qDebug("%s - %d: Finished PAM", __FILE__, __LINE__ );
+			qDebug("%s - %d: Finished PAM", __FILE__, __LINE__ );
 #endif
-                }
+		}
 	}
 }
 
 void DataSet::Clara_init( int centroidsNumber )
 {
-        for( int i=0; i<5; i++ )
-	{
+	for (int i=0; i<5; i++ ) {
 		claraMiniPams[i] = reducedDataSet( 0.2 );
 		claraMiniPams[i]->PAM_init( centroidsNumber );
 	}
-		
 	PAM_init( centroidsNumber );
 }
 
@@ -382,21 +371,18 @@ void DataSet::Clara_calculateNewCentroids()
 	m_centroids = claraMiniPams[bestMiniPam]->m_centroids;
 	calculateAssociations();
 	
-	for( int i=1; i<5; i++ )
-	{
+	for( int i=1; i<5; i++ ) {
 		claraMiniPams[i]->PAM_calculateNewCentroids();
 		double newScattering = claraMiniPams[i]->scattering();
 #ifdef __DATASET_DEBUG_
-                qDebug("%s - %d: %s, using miniPam[%d] for calculations, scattering: %f->%f", __FILE__, __LINE__, __FUNCTION__, i, bestScattering, newScattering );
+		qDebug("%s - %d: %s, using miniPam[%d] for calculations, scattering: %f->%f", __FILE__, __LINE__, __FUNCTION__, i, bestScattering, newScattering );
 #endif
-                if ( newScattering < bestScattering )
-		{
+		if ( newScattering < bestScattering ) {
 			bestScattering = newScattering;
 			bestMiniPam = i;
 			m_centroids = claraMiniPams[bestMiniPam]->m_centroids;
 			calculateAssociations();
 		}
-		
 		m_finished &= claraMiniPams[i]->m_finished;
 	}
 }
